@@ -1,0 +1,16 @@
+
+---
+dn:
+  cn: dduser001
+  org: Allevac 
+  state: Maryland
+  city: Baltimore
+  country: US
+
+ku:
+  - digSignature
+  - keyEncipher
+
+eku:
+  - serverAuth
+  - clientAuth
