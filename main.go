@@ -1,11 +1,13 @@
 package main
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"flag"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/spf13/viper"
 )
@@ -29,11 +31,21 @@ func main() {
 	rsaPtr := flag.Bool("rsa", false, "boolean, informs use of rsa cipher.")
 	eccPtr := flag.Bool("ecc", false, "boolean, informs use of ecc cipher.")
 
-	err, key := ecdsa.GenerateKey(elliptic.P384(), rand.Reader)
+	key, err := rsa.GenerateKey(rand.Reader, 4096)
 	if err != nil {
-		fmt.Printf("test %s", err)
-	} else {
-		fmt.Printf("test %s", key)
+		panic(err)
+	}
+	// Encode private key to PKCS#1 ASN.1 PEM.
+	keyPEM := pem.EncodeToMemory(
+		&pem.Block{
+			Type:  "RSA PRIVATE KEY",
+			Bytes: x509.MarshalPKCS1PrivateKey(key),
+		},
+	)
+
+	// Write private key to file.
+	if err := ioutil.WriteFile("key.rsa", keyPEM, 0700); err != nil {
+		panic(err)
 	}
 
 	// Parse command line flags
