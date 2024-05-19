@@ -7,7 +7,7 @@ import (
 	"encoding/pem"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -44,7 +44,7 @@ func main() {
 	)
 
 	// Write private key to file.
-	if err := ioutil.WriteFile("key.rsa", keyPEM, 0700); err != nil {
+	if err := os.WriteFile("key.rsa", keyPEM, 0700); err != nil {
 		panic(err)
 	}
 
