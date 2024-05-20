@@ -1,2 +1,3 @@
-# Ignore all private keys generated for testing
+# Ignore all private keys and csr generated for testing
 *.key
+*.csr
