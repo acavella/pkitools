@@ -71,9 +71,20 @@ func genrsa(subject string) {
 	}
 	rawSubj := subj.ToRDNSequence()
 	asn1Subj, _ := asn1.Marshal(rawSubj)
+	asn1KeyUsage, _ := asn1.Marshal(asn1.BitString{
+		Bytes:     []byte{byte(x509.KeyUsageCertSign)},
+		BitLength: 8,
+	})
 	template := x509.CertificateRequest{
 		RawSubject:         asn1Subj,
 		SignatureAlgorithm: x509.SHA384WithRSA,
+		ExtraExtensions: []pkix.Extension{
+			{
+				Id:       asn1.ObjectIdentifier([]int{2, 5, 29, 15}),
+				Critical: true,
+				Value:    asn1KeyUsage,
+			},
+		},
 	}
 
 	key, err := rsa.GenerateKey(rand.Reader, 4096)
