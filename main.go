@@ -60,6 +60,11 @@ func main() {
 
 }
 
+type BasicConstraints struct {
+	IsCA       bool `asn1:"optional"`
+	MaxPathLen int  `asn1:"optional,default:-1"`
+}
+
 func genrsa(subject string) {
 	// Build RDN
 	subj := pkix.Name{
@@ -71,22 +76,35 @@ func genrsa(subject string) {
 	}
 	rawSubj := subj.ToRDNSequence()
 	asn1Subj, _ := asn1.Marshal(rawSubj)
-	asn1KeyUsage, _ := asn1.Marshal(asn1.BitString{
-		Bytes:     []byte{byte(x509.KeyUsageCertSign)},
-		BitLength: 8,
-	})
+	asn1Usage, _ := asn1.Marshal(BasicConstraints{false, -1})
+	//asn1KeyUsage, _ := asn1.Marshal(x509.KeyUsage(4))
+	//x509.ExtKeyUsageServerAuth
 	template := x509.CertificateRequest{
 		RawSubject:         asn1Subj,
 		SignatureAlgorithm: x509.SHA384WithRSA,
 		ExtraExtensions: []pkix.Extension{
 			{
+				Id:       asn1.ObjectIdentifier([]int{2, 5, 29, 19}),
+				Critical: true,
+				Value:    asn1Usage,
+			},
+			{
 				Id:       asn1.ObjectIdentifier([]int{2, 5, 29, 15}),
 				Critical: true,
-				Value:    asn1KeyUsage,
+				Value:    []byte{3, 2, 5, 160},
+			},
+			{
+				Id:       asn1.ObjectIdentifier([]int{2, 5, 29, 37}),
+				Critical: true,
+				Value:    []byte{48, 10, 6, 8, 43, 6, 1, 5, 5, 7, 3, 2},
+			},
+			{
+				Id:       asn1.ObjectIdentifier([]int{2, 5, 29, 37}),
+				Critical: true,
+				Value:    []byte{48, 10, 6, 8, 43, 6, 1, 5, 5, 7, 3, 7},
 			},
 		},
 	}
-
 	key, err := rsa.GenerateKey(rand.Reader, 4096)
 	if err != nil {
 		panic(err)

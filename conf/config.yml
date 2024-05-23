@@ -12,3 +12,13 @@ ku:
 eku:
   - serverAuth
   - clientAuth
+
+rsa:
+  ku:
+    - digSignature
+    - keyEncipher
+  eku:
+    - serverAuth
+    - clientAuth
+  san:
+    upn: example.com        # Domain to be combined with CN
