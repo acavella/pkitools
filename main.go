@@ -14,6 +14,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+var appVersion = "0.0.0"
+var appBuild = "UNK"
+var appBuildDate = "00000000-0000"
+
 func init() {
 
 	viper.SetConfigName("config")  // name of config file (without extension)
@@ -24,6 +28,8 @@ func init() {
 	if err != nil {             // Handle errors reading the config file
 		fmt.Printf("fatal error config file: %s", err.Error())
 	}
+
+	printver()
 
 }
 
@@ -127,4 +133,15 @@ func genrsa(subject string) {
 	if err := os.WriteFile("rsa.key", keyPEM, 0700); err != nil {
 		panic(err)
 	}
+}
+
+func printver() {
+	fmt.Println("    ____  __ __ ______              __")
+	fmt.Println("   / __ \/ //_//  _/ /_____  ____  / /____")
+	fmt.Println("  / /_/ / ,<   / // __/ __ \/ __ \/ / ___/")
+	fmt.Println(" / ____/ /| |_/ // /_/ /_/ / /_/ / (__  )") 
+	fmt.Println("/_/   /_/ |_/___/\__/\____/\____/_/____/")
+	fmt.Printf("GoRevoke ver. %s\n", appVersion)
+	fmt.Printf("Build Type: %s\n", appBuild)
+	fmt.Printf("Build Date: %s\n", appBuildDate)
 }
